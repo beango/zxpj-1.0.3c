@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- 配置sqlSessionFactory -->
+    <!--<bean id="sqlSessionFactory1" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource1" />
+        <property name="mapperLocations" value="classpath:com/sundyn/entity/*.xml" />
+    </bean>-->
+
+    <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 自动扫描Mapping.xml文件 -->
+        <property name="mapperLocations" value="classpath:com/sundyn/entity/*.xml"/>
+        <property name="configLocation" value="classpath:mybatis.cfg.xml"/>
+        <property name="typeAliasesPackage" value="com.sundyn.entity"/>
+        <property name="plugins">
+            <array>
+                <!-- 分页插件配置 -->
+                <bean id="paginationInterceptor" class="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
+                </bean>
+                <bean id="performanceInterceptor"
+                      class="com.baomidou.mybatisplus.plugins.PerformanceInterceptor"/>
+            </array>
+        </property>
+        <!-- 全局配置注入 -->
+        <property name="globalConfig" ref="globalConfig" />
+    </bean>
+
+    <bean id="mybatisConfig" class="com.baomidou.mybatisplus.MybatisConfiguration">
+        <property name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 部分数据库不识别默认的NULL类型（比如oracle，需要配置该属性 -->
+        <!--<property name="jdbcTypeForNull">
+            <util:constant static-field="org.apache.ibatis.type.JdbcType.NULL"/>
+        </property>-->
+    </bean>
+
+    <!-- 定义 MP 全局策略 -->
+    <bean id="globalConfig" class="com.baomidou.mybatisplus.entity.GlobalConfiguration">
+        <!-- 逻辑删除 定义下面3个参数-->
+        <property name="sqlInjector" ref="logicSqlInjector"/>
+        <property name="logicDeleteValue" value="-1"/>
+        <property name="logicNotDeleteValue" value="1"/>
+        <!-- 全局ID类型： 0, "数据库ID自增"， 1, "用户输入ID", 2, "全局唯一ID", 3, "全局唯一ID"-->
+        <property name="idType" value="0"/>
+        <property name="dbColumnUnderline" value="false"/>
+    </bean>
+
+    <!-- 配置oracle主键Sequence， 其他类型数据库，请配置相应的类型-->
+    <bean id="keyGenerator" class="com.baomidou.mybatisplus.incrementer.OracleKeyGenerator"/>
+
+    <!-- 自定义处理器 -->
+    <!--<bean id="myMetaObjectHandler" class="com.baomidou.test.MyMetaObjectHandler" />-->
+    <!-- 逻辑删除Sql注入器-->
+    <bean id="logicSqlInjector" class="com.baomidou.mybatisplus.mapper.LogicSqlInjector"/>
+
+    <!-- 配置mybatis 扫描mapper接口的路径, 相当于注解@MapperScan，@MapperScan("com.baomidou.mybatisplus.test.h2.entity.mapper")-->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.sundyn.dao"/>
+    </bean>
+
+    <bean id="appriesFuncService" class="com.sundyn.service.impl.AppriesFuncServiceImpl"/>
+    <bean id="appriesMenuService" class="com.sundyn.service.impl.AppriesMenuServiceImpl"/>
+    <bean id="powerFuncService" class="com.sundyn.service.impl.AppriesPowerfuncServiceImpl"/>
+    <bean id="managerService" class="com.sundyn.service.ManagerService" parent="superDao"/>
+	<bean id="menuService" class="com.sundyn.service.MenuService" parent="superDao"/>
+	<bean id="quicklyService" class="com.sundyn.service.QuicklyService" parent="superDao"/>
+	<bean id="powerService" class="com.sundyn.service.PowerService" parent="superDao"/>
+	<bean id="deptService" class="com.sundyn.service.DeptService" parent="superDao" />
+	<bean id="queryService" class="com.sundyn.service.QueryService" parent="superDao"/>
+	<bean id="employeeService" class="com.sundyn.service.EmployeeService" parent="superDao"></bean>
+	<bean id="errorInfoService" class="com.sundyn.service.ErrorInfoService" parent="superDao"></bean>
+	<bean id="analyseService" class="com.sundyn.service.AnalyseService" parent="superDao"></bean>
+	<bean id="apprieserService" class="com.sundyn.service.ApprieserService" parent="superDao"></bean>
+	<bean id="keyTypeService" class="com.sundyn.service.KeyTypeService" parent="superDao"></bean>
+	<bean id="totalService" class="com.sundyn.service.TotalService" parent="superDao"></bean>
+	<bean id="playService" class="com.sundyn.service.PlayService" parent="superDao"></bean>
+	<bean id="playListService" class="com.sundyn.service.PlayListService" parent="superDao"></bean>
+	<bean id="appriesService" class="com.sundyn.service.AppriesService" parent="superDao"></bean>
+    <bean id="attendanceService" class="com.sundyn.service.AttendanceService" parent="superDao"></bean>	
+    <bean id="lybService" class="com.sundyn.service.LybService" parent="superDao"></bean>
+    <bean id="voteService" class="com.sundyn.service.VoteService" parent="superDao"></bean>
+    <bean id="businessService" class="com.sundyn.service.BusinessService" parent="superDao"></bean>
+    <bean id="clientService" class="com.sundyn.service.ClientService" parent="superDao"></bean>
+    <bean id="appService" class="com.sundyn.service.AppService" parent="superDao"></bean>
+    <bean id="threeService" class="com.sundyn.service.ThreeService" parent="superDao"></bean>
+    <bean id="formlistService" class="com.sundyn.service.FormlistService" parent="superDao"></bean>
+    <bean id="updateDbService" class="com.sundyn.service.UpdateDbService" parent="superDao"></bean>  
+    <bean id="registerImpl" class="com.sundyn.util.impl.RegisterImpl">
+      <property name="use" value="true"  /> 
+    </bean>
+    <bean id="reg" class="com.sundyn.util.Reg"  >
+       <property name="register" ref="registerImpl"></property>
+    </bean>
+    <bean id="registerCheck" class="com.sundyn.util.RegisterCheck">
+       <property name="deptService" ref="deptService" />
+        <property name="reg" ref="reg" /> 
+       <property name="use" value="true" /> 
+    </bean>
+    <!--    信息查询-->
+    <bean id="weburlService" class="com.sundyn.service.WeburlService" parent="superDao"></bean>
+    <!--    通知公告-->
+    <bean id="noticeService" class="com.sundyn.service.NoticeService" parent="superDao"></bean>   
+    <!--    意见调查-->
+    <bean id="adviceService" class="com.sundyn.service.AdviceService" parent="superDao"></bean>
+      <!--    设置最多页数工具类-->
+    <bean id="pageUtils" class="com.sundyn.utils.PageUtils" parent="superDao"></bean>
+    <bean id="citysUtils" class="com.sundyn.utils.CitysUtils" parent="superDao"></bean>
+    <bean id="deviceService" class="com.sundyn.service.DeviceService" parent="superDao"></bean>
+</beans>
