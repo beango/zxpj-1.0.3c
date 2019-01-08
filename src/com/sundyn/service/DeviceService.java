@@ -106,16 +106,16 @@ public class DeviceService extends SuperDao
         }
     }
 
-    public Map findByMac(final String mac) {
+    public int findByMac(final String mac) {
         final String sql = "select * from appries_device where mac=?";
         final Map tempMap = null;
         final Object[] args = { mac };
         try {
-            return this.getJdbcTemplate().queryForMap(sql, args);
+            return this.getJdbcTemplate().queryForMap(sql, args).size();
         }
         catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return -1;
         }
     }
 
@@ -132,7 +132,7 @@ public class DeviceService extends SuperDao
     }
 
     public void findAndAddByMac(String mac) {
-        if (findByMac(mac)==null){
+        if (findByMac(mac)==0){
             addDevice("", mac, false, "", DateHelper.getInstance().getDataString_1(null));
         }
         String sql = "update appries_device set lastonlinetime=? where mac=?";
