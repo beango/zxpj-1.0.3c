@@ -36,9 +36,11 @@ public class JavaXML
         }
         final XMLOutputter XMLOut = new XMLOutputter();
         String file = JavaXML.class.getClassLoader().getResource("").getPath();
-        file = file.replaceAll("%20", " ");
-        file = String.valueOf(file.substring(1, file.indexOf("classes"))) + "source/";
-        XMLOut.output(Doc, (OutputStream)new FileOutputStream(String.valueOf(file) + mac + ".xml"));
+        File classPath = new File(file);
+        String f = classPath.getParent().toString() + "\\source\\" + mac + ".xml";
+        //file = file.replaceAll("%20", " ");
+        //file = String.valueOf(file.substring(1, file.indexOf("classes"))) + "source/";
+        XMLOut.output(Doc, (OutputStream)new FileOutputStream(f));
     }
     
     public static void downloadEmployeeInfoSet(final Map<String, String> employInfoSet) throws FileNotFoundException, IOException {
@@ -46,7 +48,9 @@ public class JavaXML
         final Document Doc = new Document(root);
         if (employInfoSet != null) {
             final Element employeeName = new Element("employeeName").setText(employInfoSet.get("employeeName").toString());
+            employeeName.setAttribute("name","姓名");
             final Element job_desc = new Element("job_desc").setText(employInfoSet.get("job_desc").toString());
+            job_desc.setAttribute("name","岗位");
             final Element sex = new Element("employeeJobNum").setText(employInfoSet.get("employeeJobNum").toString());
             final Element star = new Element("star").setText(employInfoSet.get("star").toString());
             final Element employeeCardNum = new Element("employeeCardNum").setText(employInfoSet.get("employeeCardNum").toString());
@@ -66,9 +70,7 @@ public class JavaXML
         }
         final XMLOutputter XMLOut = new XMLOutputter();
         String file = JavaXML.class.getClassLoader().getResource("").getPath();
-        file = file.replaceAll("%20", " ");
-        file = String.valueOf(file.substring(1, file.indexOf("classes"))) + "source/";
-        XMLOut.output(Doc, (OutputStream)new FileOutputStream(String.valueOf(file) + "employeeInfoSet.xml"));
+        XMLOut.output(Doc, (OutputStream)new FileOutputStream(new File(file).getParent().toString() + "/source/employeeInfoSet.xml"));
     }
     
     public static void downloadNotice(final List<NoticeVo> notices) throws FileNotFoundException, IOException {

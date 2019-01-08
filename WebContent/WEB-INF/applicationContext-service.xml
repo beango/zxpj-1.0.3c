@@ -107,4 +107,5 @@
     <bean id="pageUtils" class="com.sundyn.utils.PageUtils" parent="superDao"></bean>
     <bean id="citysUtils" class="com.sundyn.utils.CitysUtils" parent="superDao"></bean>
     <bean id="deviceService" class="com.sundyn.service.DeviceService" parent="superDao"></bean>
+    <bean id="dictinfoService" class="com.sundyn.service.impl.SysDictinfoServiceImpl"/>
 </beans>

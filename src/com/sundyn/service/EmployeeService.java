@@ -4,6 +4,7 @@ import com.sundyn.dao.SuperDao;
 import com.sundyn.utils.StringUtils;
 import com.sundyn.vo.EmployeeVo;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -44,8 +45,10 @@ public class EmployeeService extends SuperDao
     }
 
     public boolean addEmployee(final EmployeeVo emp) {
-        final String sql = "insert into appries_employee (name,deptid,sex,job_desc,phone,cardnum,Password,picture,ext2,remark,showDeptName,showWindowName,companyName,ext3,ext4) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        final Object[] arg = { StringUtils.getNotNullString(emp.getName()), emp.getDeptid(), StringUtils.getNotNullString(emp.getSex()),
+        if (com.xuan.xutils.utils.StringUtils.isBlank(emp.getCardnum()))
+            return false;
+        final String sql = "if not exists(select 1 from appries_employee where cardnum=?) insert into appries_employee (name,deptid,sex,job_desc,phone,cardnum,Password,picture,ext2,remark,showDeptName,showWindowName,companyName,ext3,ext4) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        final Object[] arg = { emp.getCardnum(), StringUtils.getNotNullString(emp.getName()), emp.getDeptid(), StringUtils.getNotNullString(emp.getSex()),
                 StringUtils.getNotNullString(emp.getJob_desc()), StringUtils.getNotNullString(emp.getPhone()), StringUtils.getNotNullString(emp.getCardnum()),
                 StringUtils.getNotNullString(emp.getPassWord()), StringUtils.getNotNullString(emp.getPicture()), StringUtils.getNotNullString(emp.getExt2()),
                 StringUtils.getNotNullString(emp.getRemark()), StringUtils.getNotNullString(emp.getShowDeptName()), StringUtils.getNotNullString(emp.getShowWindowName()),
@@ -76,12 +79,10 @@ public class EmployeeService extends SuperDao
                 emp.getCompanyName()==null?"":emp.getCompanyName(), emp.getExt3()==null?"":emp.getExt3(),
                 emp.getExt4()==null?"":emp.getExt4(),
                 emp.getId() };
-
         try {
             return this.getJdbcTemplate().update(sql, arg) > 0;
         }
         catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
     }

@@ -226,5 +226,8 @@
         <property name="deviceService" ref="deviceService"></property>
         <property name="appService" ref="appService"></property>
     </bean>
-
+    <bean id="evalctlAction" class="com.sundyn.action.EvalCtlAction" scope="prototype" >
+    </bean>
+    <bean id="queuectlAction" class="com.sundyn.action.QueueCtlAction" scope="prototype" >
+    </bean>
 </beans>

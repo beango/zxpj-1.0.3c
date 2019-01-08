@@ -292,17 +292,16 @@ public class QueryAction extends MainAction
         }
 
         this.deptList = this.deptService.findchild(this.id);
-
         List d = new ArrayList();
         for (Object m : this.deptList){
             Map _m = (Map)m;
-            if (type.equals("dept") && _m.get("deptType").equals(2)){//部门
+            if (type.equals("dept") && _m.get("deptType").toString().equals("2")){//部门
                 d.add(_m);
             }
-            if ((type.equals("dating")||type.equals("employee")) && (_m.get("deptType").equals(2) || _m.get("deptType").equals(1))){//大厅
+            if ((type.equals("dating")||type.equals("employee")) && (_m.get("deptType").toString().equals("2") || _m.get("deptType").toString().equals("1"))){//大厅
                 d.add(_m);
             }
-            if (type.equals("window") && (_m.get("deptType").equals(2) || _m.get("deptType").equals(1) || _m.get("deptType").equals(0))){//窗口
+            if (type.equals("window") && (_m.get("deptType").toString().equals("2") || _m.get("deptType").toString().equals("1") || _m.get("deptType").toString().equals("0"))){//窗口
                 d.add(_m);
             }
         }

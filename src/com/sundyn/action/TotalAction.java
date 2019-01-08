@@ -783,7 +783,7 @@ public class TotalAction extends MainAction
         String dating=null;
         if (request.getParameter("deptId")!=null && !request.getParameter("deptId").equals("")){
             Map dataMap = this.deptService.findDeptById(Integer.valueOf(request.getParameter("deptId")));
-            if (dataMap!=null && (int)dataMap.get("deptType")==ENUM_DEPTTYPE.DATING.getValue()){
+            if (dataMap!=null && Integer.valueOf(dataMap.get("deptType").toString())==ENUM_DEPTTYPE.DATING.getValue()){
                 dating = request.getParameter("deptId");
             }
             if (dataMap!=null && (int)dataMap.get("deptType")==ENUM_DEPTTYPE.DEPT.getValue()){

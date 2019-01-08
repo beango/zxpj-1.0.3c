@@ -110,11 +110,8 @@ public class WeburlAction extends MainAction
         final String mac = request.getParameter("mac");
         final String basepath = ServletActionContext.getServletContext().getRealPath("\\");
         String file = JavaXML.class.getClassLoader().getResource("").getPath();
-        file = file.replaceAll("%20", " ");
-        file = String.valueOf(file.substring(1, file.indexOf("classes"))) + "source/";
-        final String filename = String.valueOf(mac) + ".xml";
-        String url = String.valueOf(file) + filename;
-        File f = new File(url);
+        File classPath = new File(file);
+        File f = new File(classPath.getParent().toString() + "\\source\\" + String.valueOf(mac) + ".xml");
         if (!f.exists()) {
             f.createNewFile();
         }

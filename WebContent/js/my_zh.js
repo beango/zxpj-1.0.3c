@@ -1508,6 +1508,7 @@ function powerEditDialog(data, title) {
         }
 	}});
 }
+
 // 汇总
 // 机构汇总
 function totalDeptDeal(isExport) {
@@ -1516,6 +1517,7 @@ function totalDeptDeal(isExport) {
 	var endDate = document.getElementById("endDate").value;
 	window.location.href = "totalDeptDeal.action?startDate=" + startDate + "&endDate=" + endDate + "&deptId=" + getDeptSelect() + "&export=" + isExport + "&deptpath=" + $("#deptId").val();
 }
+
 // 大厅汇总
 function totalDatingDeal(isExport) {
 	var startDate = document.getElementById("startDate").value;
@@ -1523,6 +1525,7 @@ function totalDatingDeal(isExport) {
     initDeptValue();
 	window.location.href = "totalDatingDeal.action?startDate=" + startDate + "&endDate=" + endDate + "&deptId=" + getDeptSelect() + "&export=" + isExport + "&deptpath=" + $("#deptId").val();
 }
+
 // 窗口汇总
 function totalWindowDeal(isExport) {
 	var startDate = document.getElementById("startDate").value;
@@ -1531,18 +1534,21 @@ function totalWindowDeal(isExport) {
     initDeptValue();
 	window.location.href = "totalWindowDeal.action?startDate=" + startDate + "&endDate=" + endDate + "&deptId=" + deptId + "&export=" + isExport + "&deptpath=" + $("#deptId").val();
 }
+
 // 个人汇总
 function totalPersonAjax(data) {
 	dojo.xhrPost({url:"totalPersonAjax.action", content:{id:data}, load:function (resp, ioArgs) {
 		document.getElementById("window").innerHTML = resp;
 	}});
 }
+
 // 部门汇总
 function totalSectionDeal() {
 	var startDate = document.getElementById("startDate").value;
 	var endDate = document.getElementById("endDate").value;
 	window.location.href = "totalSectionDeal.action?startDate=" + startDate + "&endDate=" + endDate;
 }
+
 function totalPersonDeal(isExport) {
 	var startDate = document.getElementById("startDate").value;
 	var endDate = document.getElementById("endDate").value;
@@ -1552,6 +1558,7 @@ function totalPersonDeal(isExport) {
     var eid = getEmployeeSelect();
 	window.location.href = "totalPersonDeal.action?startDate=" + startDate + "&endDate=" + endDate + "&deptId=" + deptId + "&employeeId=" + eid + "&export=" + isExport +"&deptpath=" + $("#deptId").val();
 }
+
 function totalBusinessDeal() {
 	var startDate = document.getElementById("startDate").value;
 	var endDate = document.getElementById("endDate").value;
@@ -1573,8 +1580,6 @@ function totalDDeal(){
 	window.location.href = "totalDDeal.action?startDate=" + startDate + "&endDate=" + endDate+"&businessId="+businessId ;
 }
 
-
-
 // 打印
 function SetPrintSettings() {
 	factory.printing.SetMarginMeasure(2);
@@ -1592,11 +1597,13 @@ function SetPrintSettings() {
 	factory.printing.rightMargin = 1;
 	factory.printing.bottomMargin = 1;
 }
+
 function printsetup() {// 打印页面设置
 	pr.style.display = "none";
 	wb.execwb(8, 1);
 	pr.style.display = "block";
 }
+
 function printpreview() {// 打印页面预览
 	pr.style.display = "none";
 	wb.execwb(7, 1);
@@ -2736,6 +2743,7 @@ function sundynSetSave(){
 	var est8="";
 	var est9="";
 	var coun=0;
+	var queueinte=''
 	// 得到系统设置
 	if(document.getElementById("est1").checked){
 		est1="true";
@@ -2827,6 +2835,7 @@ function sundynSetSave(){
 	eam=document.getElementById("eam").value;
 	spm=document.getElementById("spm").value;
 	epm=document.getElementById("epm").value;
+    queueinte = document.getElementById("txtqueueinte").value;
 	// 得到星级
 	var stars=document.getElementById("stars");
 	var prate="101";
@@ -2834,7 +2843,8 @@ function sundynSetSave(){
 	var pstar="**********";
 	var prateN = document.getElementsByName("prate");
 	var pgradeN = document.getElementsByName("pgrade");
-	var pstarN = document.getElementsByName("pstar")
+	var pstarN = document.getElementsByName("pstar");
+	var evaluateurl = $("#txtevaluateurl").val();
 	for(var i=0;i<prateN.length;i++){
 	    if(prateN[i].value=="")
         {
@@ -2887,7 +2897,11 @@ function sundynSetSave(){
 	      // return 0;
  	   // }
 	}
-  	 dojo.xhrPost({url:"baseSetSave.action",content:{camera:camera,k7:k7,star:star,bind:bind,guide:guide,tipLanguage:tipLanguage,title:title,logo:logo,sam:sam,eam:eam,spm:spm,epm:epm,prates:prates,pgrades:pgrades,pstars:pstars,buttom:buttom,requestAddress:requestAddress,standard:standard,est1:est1,est2:est2,est3:est3,est4:est4,est5:est5,est6:est6,est7:est7,est8:est8,est9:est9},load:function (resp, ioArgs){
+  	 dojo.xhrPost({url:"baseSetSave.action",content:{camera:camera,k7:k7,star:star,bind:bind,guide:guide,tipLanguage:tipLanguage,
+             title:title,logo:logo,sam:sam,eam:eam,spm:spm,epm:epm,prates:prates,pgrades:pgrades,pstars:pstars,buttom:buttom,requestAddress:requestAddress,
+             standard:standard,est1:est1,est2:est2,est3:est3,est4:est4,est5:est5,est6:est6,est7:est7,est8:est8,est9:est9,
+             evaluateurl : evaluateurl,queueinte:queueinte
+         },load:function (resp, ioArgs){
              layer.msg(resp, {
                  icon: 1,
                  time: 800

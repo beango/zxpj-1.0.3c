@@ -76,7 +76,7 @@
 		   <div class="center_04">
 		   <div class="center_04_left">
 			      <div><img src="<s:text name='sundyn.query.pic.selectDept' />" /></div>
-				  <div class="center_04_left_01 kuang">
+				  <div class="center_04_left_01 kuang" style="height:500px;">
 					  <div class="dtree" id="tree" style="text-align: left;">
 							<script type="text/javascript">
 								d = new dTree('d');

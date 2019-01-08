@@ -480,6 +480,18 @@ public class DeptService extends SuperDao
         }
     }
 
+    public Map findByMac(final String fathermac, String mac) {
+        final String sql = "select * from appries_dept where remark=? and fatherid=(select id from appries_dept where remark=?)";
+        final Map tempMap = null;
+        final Object[] args = { mac, fathermac };
+        try {
+            return this.getJdbcTemplate().queryForMap(sql, args);
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
     public int countByPlayListId(final String playListId) {
         final String sql = "select count(*) from appries_dept where dept_playListId=?  ";
         final Object[] args = { playListId };
@@ -777,6 +789,25 @@ public class DeptService extends SuperDao
         }
         catch (Exception e) {
             return null;
+        }
+    }
+    /*
+    @mac nvarchar(50),
+	@name nvarchar(50),
+	@depttype int,
+	@ext1 nvarchar(50),
+	@ext2 nvarchar(50),
+	@ext3 nvarchar(50)
+     */
+    public boolean SyncDept(String fathermac, String mac, String name, int type, String ext1, String ext2, String ext3){
+        final String sql = "{call SyncDept(?,?,?,?,?,?,?)}";
+        final Object[] args = {fathermac, mac, name, type, ext1, ext2, ext3};
+        try {
+            return this.getJdbcTemplate().update(sql, args)>0;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

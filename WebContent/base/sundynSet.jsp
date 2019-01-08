@@ -12,7 +12,7 @@
         <script type="text/javascript" src="js/dojo.js"></script>
   		<script type="text/javascript" src="js/dialog.js"></script>
    	    <script type="text/javascript" src="js/json2.js"></script>
-		<script type="text/javascript" src="js/my_<s:text name='sundyn.language' />.js?1"></script>
+		<script type="text/javascript" src="js/my_<s:text name='sundyn.language' />.js"></script>
         <script type="text/javascript" src="lib/layui/layui.js"></script>
         <script type="text/javascript" src="js/application.js"></script>
 
@@ -61,6 +61,7 @@
                     <li><s:text name='sundyn.softSetup.timeSetup' /></li>
                     <li><s:text name='sundyn.softSetup.starSetup' /></li>
                     <li><s:text name='sundyn.softSetup.employeeInfoSetup' /></li>
+                    <li>数据同步接口地址</li>
                 </ul>
                 <div class="layui-tab-content">
                     <div class="layui-tab-item layui-show">
@@ -114,6 +115,10 @@
                             <input type="checkbox" lay-skin="switch" lay-text="启用|禁用" lay-filter="employeeInfoSet" name="employeeInfoSet9" value="9" id="est9" <c:if test="${employeeInfoSet.unitName== 'true'}">checked="checked"</c:if> />&nbsp;&nbsp;<s:text name='sundyn.column.unitName'/><br/>
                         </div>
                     </div>
+                    <div class="layui-tab-item">
+                        <div style="margin-top:0px;">评价结果推送地址：<input type="text" id="txtevaluateurl" name="txtevaluateurl" class="input_comm" value="${nanhai.evaluateurl}" style="width:420px" /><br></div>
+                        <div style="margin-top:5px;">排队机接口地址：<input type="text" id="txtqueueinte" name="txtqueueinte" class="input_comm" value="${queueinte}" style="width:420px" /></div>
+                    </div>
                 </div>
             </div>
 
@@ -125,14 +130,6 @@
 		<div id="dialog" style="width: 700px; display: none;"></div>
 	</body>
 </html>
-<script>
-if(document.getElementById('star').checked){
-	document.getElementById('est66').style.display='';
-}
-if(!document.getElementById('star').checked){
-	document.getElementById('est66').style.display='none';
-}
-</script>
 <script>
     var employeeInfoSetArr = new Array();
     layui.use(['form', 'element'], function(){

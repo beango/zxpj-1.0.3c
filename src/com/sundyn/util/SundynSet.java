@@ -1,5 +1,7 @@
 package com.sundyn.util;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.struts2.ServletActionContext;
 import org.jdom.Content;
 import org.jdom.Document;
@@ -24,6 +26,9 @@ public class SundynSet {
     private Map<String, String> m_work3;
     private Map<String, String> m_work4;
     private Map<String, String> m_employee;
+    @Getter
+    @Setter
+    private Map<String, String> m_nanhai;
     private List l_m7Temp;
     private List l_star;
     private static String setPath;
@@ -45,7 +50,6 @@ public class SundynSet {
     }
 
     private SundynSet(final String path) throws JDOMException, IOException {
-    	System.out.println(path);
         final SAXBuilder sb = new SAXBuilder();
         final Document doc = sb.build(path);
         String result = null;
@@ -136,6 +140,8 @@ public class SundynSet {
             m_star.put("star", star.getChildText("star"));
             this.l_star.add(m_star);
         }
+        final Element nanhai = root.getChild("nanhai");
+        (this.m_nanhai = new HashMap<String, String>()).put("evaluateurl", nanhai.getChild("evaluateurl").getText());
     }
 
     public Map<String, String> getM_system() {
@@ -290,7 +296,8 @@ public class SundynSet {
         sb = null;
     }
 
-    public void update(final Map m_system, final Map m_content, final Map m_work2, final Map m_work4, final List l_star, final Map employeeInfo) throws JDOMException, IOException {
+    public void update(final Map m_system, final Map m_content, final Map m_work2, final Map m_work4, final List l_star, final Map employeeInfo, final Map evaluateurl)
+            throws JDOMException, IOException {
         final String basepath = ServletActionContext.getServletContext().getRealPath("/");
         SAXBuilder sb = new SAXBuilder();
         Document doc = sb.build(String.valueOf(basepath) + "update" + File.separator + "set.xml");
@@ -397,6 +404,14 @@ public class SundynSet {
             employeeInfoSet.addContent((Content)windowName);
             employeeInfoSet.addContent((Content)deptname);
             employeeInfoSet.addContent((Content)unitName);
+        }
+        if (evaluateurl != null && !evaluateurl.equals(this.m_nanhai)) {
+            this.m_nanhai = (Map<String, String>)evaluateurl;
+            root.removeChild("nanhai");
+            final Element system = new Element("nanhai");
+            final Element eevaluateurl = new Element("evaluateurl").setText(m_nanhai.get("evaluateurl").toString());
+            system.addContent((Content)eevaluateurl);
+            root.addContent((Content)system);
         }
         final Format format = Format.getPrettyFormat();
         format.setIndent("    ");

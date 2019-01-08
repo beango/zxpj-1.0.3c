@@ -576,6 +576,7 @@ public class QueryService extends SuperDao
             sql = "select * from ("+sql+") t where t.rows>" + start + " and t.rows<=" + (num+start);
         sql = " select a.*,b.name as fatherName  from  (" + sql + ")   as a left join appries_dept b  on  a.fatherId=b.id ORDER BY a.JieshouTime DESC";
         try {
+            logger.debug(sql);
             return this.getJdbcTemplate().queryForList(sql);
         }
         catch (Exception e) {

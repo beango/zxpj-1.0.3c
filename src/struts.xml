@@ -79,6 +79,7 @@
 	<!--自动下载意见调查、信息查询、通知公告 -->
 	<include file="download.xml"></include>
     <include file="device.xml"></include>
+    <include file="evalctl.xml"></include>
     <bean type="org.apache.struts2.dispatcher.multipart.MultiPartRequest"
           name="myRequestParser" class="com.sundyn.wrapper.RequestParseWrapper"
           scope="default" optional="true" />
@@ -89,4 +90,12 @@
 			<result name="success">/msg.jsp</result>
 		</action>
 	</package>
+
+    <package name="action" extends="struts-default">
+        <action name="dispatcher" class="com.sundyn.action.ActionOperatorService">
+            <!-- 转发操作dispatcher操作 -->
+            <!-- <result name="success">/actionOperator.jsp</result> -->
+            <result name="success" type="dispatcher">http://www.baidu.com</result>
+        </action>
+    </package>
 </struts>

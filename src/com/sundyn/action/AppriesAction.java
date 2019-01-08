@@ -2,6 +2,7 @@ package com.sundyn.action;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.sundyn.entity.City;
+import com.sundyn.entity.InteLog;
 import com.sundyn.entity.Province;
 import com.sundyn.service.*;
 import com.sundyn.util.Pager;
@@ -10,24 +11,27 @@ import com.sundyn.util.socketUdp;
 import com.sundyn.utils.CitysUtils;
 import com.sundyn.utils.GetWeatherString;
 import com.sundyn.vo.AppriesVo;
+import com.xuan.xutils.http.HttpResponse;
+import com.xuan.xutils.http.HttpUtils;
+import com.xuan.xutils.utils.StringUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.jfree.util.Log;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.security.KeyStore;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AppriesAction extends ActionSupport
 {
@@ -565,7 +569,7 @@ public class AppriesAction extends ActionSupport
         final String mac = request.getParameter("mac");
         final String tt = request.getParameter("tt");
         final String cardnum = request.getParameter("cardnum");
-        final String pj = request.getParameter("pj");
+        String pj = request.getParameter("pj");
         final String tel = request.getParameter("tel");
         final String idCard = request.getParameter("idCard");
         final String name = request.getParameter("name");
@@ -576,6 +580,8 @@ public class AppriesAction extends ActionSupport
         String businessTime = request.getParameter("businessTime");
         String imgfile = request.getParameter("imgfile");
         String busRst = request.getParameter("busRst");
+        String ywlsh = request.getParameter("ywlsh");
+        System.out.println("业务流水号:" + ywlsh);
         int min = 0;
         int sec = 0;
         if (businessTime != null) {
@@ -616,7 +622,7 @@ public class AppriesAction extends ActionSupport
                 final Map appries = this.appriesService.getAppriesInfo(cardnum, mac, pj);
                 final Map temp = new HashMap();
                 final List host = this.managerService.getuserHost();
-                final socketUdp udp = new socketUdp();
+                //final socketUdp udp = new socketUdp();
                 if (tipLanguage.equals("") || tipLanguage.equals("zh")) {
                     this.msg = tt + '\r' + '\n' + "\u5927\u5385:" + appries.get("dating") + '\r' + '\n' + "\u7a97\u53e3:" + appries.get("window") + '\r' + '\n' + "\u804c\u5458:" + appries.get("Name") + '\r' + '\n' + appries.get("keyname") + '\r' + '\n';
                 }
@@ -637,7 +643,7 @@ public class AppriesAction extends ActionSupport
                 for (final Object key : temp.keySet()) {
                     final String mb = temp.get(key).toString();
                     if (!mb.equals("")) {
-                        udp.send(mb, this.clientPort, this.msg);
+                        //udp.send(mb, this.clientPort, this.msg);
                     }
                 }
                 final List mobile = this.managerService.getuserMobile();
@@ -665,16 +671,16 @@ public class AppriesAction extends ActionSupport
                     this.mobileIp = addr.getHostAddress();
                 }
                 final String t = String.valueOf(this.msg) + "||" + s_m;
-                udp.send(this.mobileIp, this.mobilePort, String.valueOf(this.msg) + "||" + s_m);
-                udp.close();
+                //udp.send(this.mobileIp, this.mobilePort, String.valueOf(this.msg) + "||" + s_m);
+                //udp.close();
             }
             catch (Exception e3) {
                 e3.printStackTrace();
             }
         }
         String msg2 = "1";
-        if (!sam.equals("") && !eam.equals("") && !spm.equals("") && !epm.equals("")) {
-            if ((time.compareTo(sam) >= 0 && time.compareTo(eam) <= 0) || (time.compareTo(spm) >= 0 && time.compareTo(epm) <= 0)) {
+        if (1==1 || !sam.equals("") && !eam.equals("") && !spm.equals("") && !epm.equals("")) {
+            if (1==1 || (time.compareTo(sam) >= 0 && time.compareTo(eam) <= 0) || (time.compareTo(spm) >= 0 && time.compareTo(epm) <= 0)) {
                 if (mac == null || mac.isEmpty()) {
                     this.msg = "error:mac\u4e3a\u7a7a";
                     msg2 = this.getText("sundyn.query.error.noMac");
@@ -709,8 +715,46 @@ public class AppriesAction extends ActionSupport
                             this.msg = "error:mac=" + mac + "--tt=" + tt + "--cardnum=" + cardnum + "--pj=" + pj + " has been saved";
                         }
                         else if (list.size() == 0) {
-                            if (this.appriesService.addArriresXiangYang(mac, tt, cardnum, pj, demo, videofile, businessTime, min, sec, tel, idCard, name, phone, imgfile, busRst)) {
+                            if (this.appriesService.addArriresXiangYang(mac, tt, cardnum, pj, demo, videofile, businessTime, min, sec, tel, idCard, name, phone,
+                                    imgfile, busRst,ywlsh)) {
                                 this.msg = "success";
+
+                                List keyList = keyTypeService.findByKeyNo(pj);
+                                if (null!=keyList && keyList.size()>0){
+                                    HashMap<String, Object> json = new HashMap<>();
+                                    json.put("evaluateLevel", Integer.valueOf(pj)+1);
+                                    json.put("evaluateContent", URLEncoder.encode(((Map)(keyList.get(0))).get("name").toString(),"utf-8"));
+                                    json.put("evaluateUrlAddr",(imgfile==null?"":"/download/recorder/"+imgfile));
+                                    json.put("operatorId", cardnum);
+                                    json.put("transitionId", ywlsh);
+                                    List deptlist = deptService.findAll(null);
+                                    Map m1 = null, m2 = null, m3 = null;
+                                    for (Object d : deptlist){
+                                        Map m = (Map)d;
+                                        if (m.get("remark").toString().equals(mac))
+                                            m1 = m;
+                                    }
+                                    if (m1!=null){
+                                        for (Object d : deptlist){
+                                            Map m = (Map)d;
+                                            if (m.get("id").toString().equals(m1.get("fatherId").toString()))
+                                                m2 = m;
+                                        }
+                                    }
+                                    json.put("officeId", m2 == null ? "" : m2.get("remark").toString());
+                                    json.put("counterId", m1 == null ? "" : m1.get("remark").toString());
+                                    addLog(request, json.toString(), null);
+                                    System.out.println("评价内容发送：" + hashMapToJson(json));
+
+                                    SundynSet set = SundynSet.getInstance(path);
+                                    String evaluateurl = set.getM_nanhai().get("evaluateurl");
+                                    System.out.println("Quartz的任务调度！！！" + evaluateurl);
+                                    if(StringUtils.isNotBlank(evaluateurl)) {
+                                        String resultStr = "";
+                                        resultStr = HttpUtils.doPost(set.getM_nanhai().get("evaluateurl") + "/evaluate/sendEvaluate.action", hashMapToJson(json));
+                                        System.out.println(resultStr);
+                                    }
+                                }
                             }
                             else {
                                 msg2 = this.getText("sundyn.query.error.wrongDB");
@@ -736,7 +780,39 @@ public class AppriesAction extends ActionSupport
         }
         return "success";
     }
-    
+    public String hashMapToJson(HashMap map) {
+        String string = "{";
+        for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
+            Map.Entry e = (Map.Entry) it.next();
+            string += "\"" + e.getKey() + "\":";
+            string += "\"" + e.getValue() + "\",";
+        }
+        string = string.substring(0, string.lastIndexOf(","));
+        string += "}";
+        return string;
+    }
+    private Integer addLog(HttpServletRequest request, String body, String ywlsh) throws UnsupportedEncodingException {
+        String url = request.getScheme()+"://"+ request.getServerName()+request.getRequestURI();
+        if (null!=request.getQueryString())
+            url += "?"+request.getQueryString();
+
+        InteLog log = new InteLog();
+        log.setToken(request.getParameter("token"));
+        log.setYwlsh(ywlsh);
+        log.setInteurl(url);
+        log.setIntedata(body);
+        log.setReqtime(new Date());
+
+        String ip = request.getHeader("x-forwarded-for");
+        if(ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) ip = request.getHeader("Proxy-Client-IP");
+        if(ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) ip = request.getHeader("WL-Proxy-Client-IP");
+        if(ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) ip = request.getRemoteAddr();
+        log.setReqip(ip);
+        log.setStatus(0);
+        log.insert();
+        return log.getId();
+    }
+
     public String appriesAddSp2() throws Exception {
         final String path = ServletActionContext.getServletContext().getRealPath("/");
         String sam = "";
@@ -1029,7 +1105,7 @@ public class AppriesAction extends ActionSupport
         final String msg = "http://localhost/appriesAddSp.action?mac=" + mac + "&&tt=" + tt + "&&cardnum=" + cardNum + "&&pj=" + appriesButton + "&&tel=" + tel + "&&idCard=" + idCard + "&&businessType=1";
         System.out.println("debug\u6dfb\u52a0\u8bc4\u4ef7\u6570\u636e\u8bf7\u6c42=" + msg);
         request.setAttribute("msg", (Object)msg);
-        this.appriesService.addArriresXiangYang(mac, tt, cardNum, appriesButton, "13333", "", businessTime, 0, 0, tel, idCard, null, null, null, null);
+        this.appriesService.addArriresXiangYang(mac, tt, cardNum, appriesButton, "13333", "", businessTime, 0, 0, tel, idCard, null, null, null, null, null);
         return "success";
     }
     

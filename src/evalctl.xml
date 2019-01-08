@@ -1,0 +1,17 @@
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="evalctl" extends="json-default">
+		<action name="evalctl" class="evalctlAction" method="evalctl">
+            <result name="success" type="json">
+                <param name="root">jsonData</param>
+            </result>
+		</action>
+        <action name="queuectl" class="queuectlAction" method="queuectl">
+            <result name="success" type="json">
+                <param name="root">jsonData</param>
+            </result>
+        </action>
+	</package>
+</struts>

@@ -290,11 +290,11 @@ public class ManagerAction extends MainAction
         final String ipHouse = addr.getHostAddress();
         final Integer playListId = 1;
         final String basePath = ServletActionContext.getServletContext().getRealPath(File.separator);
-        final String filePath = String.valueOf(basePath) + "m7app" + File.separator + playListId.toString() + File.separator + "NEWCONFIG.XML";
-        final String filePath2 = String.valueOf(basePath) + "update" + File.separator + playListId.toString() + File.separator + "NEWCONFIG.XML";
-        final String filePath3 = String.valueOf(basePath) + "m7app" + File.separator + "NEWCONFIG.XML";
-        final String filePath4 = String.valueOf(basePath) + "update" + File.separator + "NEWCONFIG.XML";
-        final String updateFilepath = String.valueOf(basePath) + "UpdateFile" + File.separator + "NEWCONFIG.XML";
+        final String filePath = String.valueOf(basePath) + File.separator + "m7app" + File.separator + playListId.toString() + File.separator + "NEWCONFIG.XML";
+        final String filePath2 = String.valueOf(basePath) + File.separator + "update" + File.separator + playListId.toString() + File.separator + "NEWCONFIG.XML";
+        final String filePath3 = String.valueOf(basePath) + File.separator + "m7app" + File.separator + "NEWCONFIG.XML";
+        final String filePath4 = String.valueOf(basePath) + File.separator + "update" + File.separator + "NEWCONFIG.XML";
+        final String updateFilepath = String.valueOf(basePath) + File.separator + "UpdateFile" + File.separator + "NEWCONFIG.XML";
         final SAXBuilder sb = new SAXBuilder(false);
         final Document doc = sb.build(new File(filePath));
         final Document doc2 = sb.build(new File(filePath2));
@@ -343,6 +343,7 @@ public class ManagerAction extends MainAction
         if (manager != null) {
             CookieUtils cookieUtils = new CookieUtils();
             Cookie cookie = cookieUtils.addCookie(manager);
+
             response.addCookie(cookie);// 添加cookie到response中
 
             session.setAttribute("manager", (Object)manager);

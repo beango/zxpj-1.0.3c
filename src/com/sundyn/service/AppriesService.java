@@ -63,8 +63,8 @@ public class AppriesService extends SuperDao
     
     public boolean addArriresXiangYang(final String mac, final String tt, final String cardnum, final String pj, final String demo,
                                        final String videofile, final String businessTime, final int min, final int sec, final String tel,
-                                       final String idCard, final String name, final String phone, String imgfile, String busRst) {
-        final String sql = "{call appriesAdd(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+                                       final String idCard, final String name, final String phone, String imgfile, String busRst, String ywlsh) {
+        final String sql = "{call appriesAdd(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
         final Object[] args = {
                 mac==null?"":mac,
                 tt==null?"":tt,
@@ -78,7 +78,7 @@ public class AppriesService extends SuperDao
                 name==null?"":name,
                 phone==null?"":phone,
                 imgfile==null?"":imgfile,
-                busRst==null?"":busRst };
+                busRst==null?"":busRst,ywlsh==null?"":ywlsh };
         try {
             final int num = this.getJdbcTemplate().update(sql, args);
             return num > 0;

@@ -17,6 +17,7 @@ public class PlayService extends SuperDao
             return num > 0;
         }
         catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

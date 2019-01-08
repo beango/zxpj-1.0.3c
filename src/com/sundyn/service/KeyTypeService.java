@@ -61,7 +61,6 @@ public class KeyTypeService extends SuperDao
             return this.getJdbcTemplate().queryForList(sql);
         }
         catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -72,7 +71,6 @@ public class KeyTypeService extends SuperDao
             return this.getJdbcTemplate().queryForList(sql);
         }
         catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -85,7 +83,6 @@ public class KeyTypeService extends SuperDao
             return num > 0;
         }
         catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -129,8 +126,17 @@ public class KeyTypeService extends SuperDao
             return allKey;
         }
         catch (Exception e) {
-            e.printStackTrace();
             return "8";
+        }
+    }
+
+    public List findByKeyNo(String keyno){
+        final String sql = "select * from appries_keytype where keyno=" + keyno + "  order by keyNo";
+        try {
+            return this.getJdbcTemplate().queryForList(sql);
+        }
+        catch (Exception e) {
+            return null;
         }
     }
 }

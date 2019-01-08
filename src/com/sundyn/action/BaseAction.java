@@ -1,10 +1,9 @@
 package com.sundyn.action;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.opensymphony.xwork2.ActionSupport;
-import com.sundyn.service.DeptService;
-import com.sundyn.service.EmployeeService;
-import com.sundyn.service.PlayListService;
-import com.sundyn.service.PowerService;
+import com.sundyn.entity.SysDictinfo;
+import com.sundyn.service.*;
 import com.sundyn.util.*;
 import com.sundyn.utils.JavaXML;
 import com.sundyn.vo.SaveTextVo;
@@ -12,6 +11,7 @@ import net.sf.json.JSONObject;
 import org.apache.struts2.ServletActionContext;
 import org.jdom.JDOMException;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +34,8 @@ public class BaseAction extends MainAction
     private Pager pager;
     private InputStream xml;
     private SaveTextVo saveTextVo;
-
+    @Resource
+    private ISysDictinfoService dictinfoService;
     private static void copy(final File src, final File dst) {
         try {
             InputStream in = null;
@@ -492,9 +493,25 @@ public class BaseAction extends MainAction
         employeeInfoSet.put("windowName", request.getParameter("est7"));
         employeeInfoSet.put("deptname", request.getParameter("est8"));
         employeeInfoSet.put("unitName", request.getParameter("est9"));
+
+        final Map<String, String> evaluateurl = new HashMap<String, String>();
+        evaluateurl.put("evaluateurl", req.getString("evaluateurl"));
+
         final SundynSet sundynSet = SundynSet.getInstance(path);
-        sundynSet.update(sys, content, work2, work3, ls, employeeInfoSet);
+        sundynSet.update(sys, content, work2, work3, ls, employeeInfoSet, evaluateurl);
         JavaXML.downloadEmployeeInfoSet(employeeInfoSet);
+        String queueinte = req.getString("queueinte");
+        SysDictinfo dict = dictinfoService.selectOne(new EntityWrapper<SysDictinfo>().where("isEnable=1").and("dictkey='QueueInte'"));
+        if (dict!=null){
+            System.out.println("接口参数：" + dict.getDictvalue());
+            dict.setDictvalue(queueinte);
+            dictinfoService.updateById(dict);
+        }
+        else
+        {
+            System.out.println("接口参数：" + "null");
+        }
+
         request.setAttribute("msg", (Object)this.getText("sundyn.saveSuccess"));
         Reg.reset();
         return "success";
@@ -510,8 +527,20 @@ public class BaseAction extends MainAction
         request.setAttribute("work4", (Object)sundynSet.getM_work4());
         request.setAttribute("m7temp", (Object)sundynSet.getL_m7Temp());
         request.setAttribute("stars", (Object)sundynSet.getL_star());
+        request.setAttribute("nanhai", (Object)sundynSet.getM_nanhai());
         final Map<String, String> m = sundynSet.getM_employee();
         request.setAttribute("employeeInfoSet", (Object)sundynSet.getM_employee());
+
+        String queueinte = req.getString("queueinte");
+        SysDictinfo dict = dictinfoService.selectOne(new EntityWrapper<SysDictinfo>().where("isEnable=1").and("dictkey='QueueInte'"));
+        if (dict!=null){
+            System.out.println("接口参数：" + dict.getDictvalue());
+            request.setAttribute("queueinte", dict.getDictvalue());
+        }
+        else
+        {
+            System.out.println("接口参数：" + "null");
+        }
         return "success";
     }
 

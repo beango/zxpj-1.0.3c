@@ -4,6 +4,7 @@ import com.sundyn.service.*;
 import com.sundyn.util.*;
 import com.sundyn.vo.AttendanceVo;
 import com.sundyn.vo.EmployeeVo;
+import com.xuan.xutils.utils.DateUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.map.LinkedMap;
 import org.apache.log4j.Logger;
@@ -191,7 +192,7 @@ public class EmployeeAction extends MainAction
         employeeVo.setPhone(phone);
         employeeVo.setDeptid(Integer.valueOf(deptId));
         employeeVo.setExt1(null);
-        employeeVo.setExt2(ext2);
+        employeeVo.setExt2(cardNum);
         employeeVo.setShowDeptName(showDeptName);
         employeeVo.setShowWindowName(showWindowName);
         employeeVo.setCompanyName(unitName);
@@ -202,7 +203,7 @@ public class EmployeeAction extends MainAction
             final String md5Str = md5.MD5(String.valueOf(getServletContext().getRealPath("/")) + imgName);
             employeeVo.setExt4(md5Str);
         }
-        this.employeeService.addEmployee(employeeVo);
+        boolean b = this.employeeService.addEmployee(employeeVo);
         return "success";
     }
 
@@ -259,7 +260,7 @@ public class EmployeeAction extends MainAction
         employeeVo.setPhone(phone);
         employeeVo.setId(Integer.valueOf(employeeId));
         employeeVo.setPicture(imgName);
-        employeeVo.setExt2(ext2);
+        employeeVo.setExt2(cardNum);
         employeeVo.setCompanyName(unitName);
         employeeVo.setRemark(remark);
         employeeVo.setShowDeptName(showDeptName);
@@ -272,7 +273,7 @@ public class EmployeeAction extends MainAction
             final String md5Str = md5.MD5(filename);
             employeeVo.setExt4(md5Str);
         }
-        this.employeeService.UpdateEmployee(employeeVo);
+        boolean b = this.employeeService.UpdateEmployee(employeeVo);
         return "success";
     }
 
@@ -612,13 +613,9 @@ public class EmployeeAction extends MainAction
         final HttpServletRequest request = ServletActionContext.getRequest();
         final HttpSession session = request.getSession();
         final String cardnum = request.getParameter("cardnum");
-        final Object abc = session.getAttribute("employee");
         final Map e = (Map)session.getAttribute("employee");
-        /*while (iter.hasNext()) {
-            String key = iter.next();
-            Object valuevv = employee.get(key);
-            System.out.println("employee.keyand value: " + key + " value:" + valuevv);
-        }*/
+        if (e == null)
+            return "success";
         final String userId = e.get("id").toString();
         final String d = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         final String t = new SimpleDateFormat("HH:mm:ss").format(new Date());
@@ -936,6 +933,9 @@ public class EmployeeAction extends MainAction
     public String getUpdateVersion() throws IOException, JDOMException {
         final HttpServletRequest request = ServletActionContext.getRequest();
         final HttpServletResponse response = ServletActionContext.getResponse();
+        String u = request.getRemoteAddr();
+        System.out.println(u + ":A..............................................." + DateUtils.date2String(new Date()));
+
         String mac = request.getParameter("mac");
         final String ip = request.getRemoteAddr();
         this.url = "";
@@ -947,6 +947,7 @@ public class EmployeeAction extends MainAction
         final String basepath = getServletContext().getRealPath("\\");
         String playListId = "";
         final String dd = df.format(new Date());
+        System.out.println(u + ":B..............................................." + DateUtils.date2String(new Date()));
         if (mac != null) {
             final Map dept = this.deptService.findByMac(mac);
             if (dept != null) {
@@ -956,11 +957,17 @@ public class EmployeeAction extends MainAction
                 playListName = playListM.get("playListName").toString();
             }
         }
+        System.out.println(u + ":C..............................................." + DateUtils.date2String(new Date()));
         final String m7binpath = String.valueOf(basepath) + "update" + File.separator + playListId;
+        System.out.println(u + ":C1..............................................." + DateUtils.date2String(new Date()));
         if (mac != null && config != null && config.equals("true")) {
+            System.out.println(u + ":C2..............................................." + DateUtils.date2String(new Date()));
             this.deviceService.findAndAddByMac(mac);
+            System.out.println(u + ":C3..............................................." + DateUtils.date2String(new Date()));
             deptService.hasAdnAddDeptByMac(mac);
+            System.out.println(u + ":C4..............................................." + DateUtils.date2String(new Date()));
             final Map dept = this.deptService.findByMac(mac);
+            System.out.println(u + ":D..............................................." + DateUtils.date2String(new Date()));
             if (dept != null) {
                 playListId = dept.get("dept_playListId").toString();
                 final File f = new File(String.valueOf(m7binpath) + File.separator + "CONFIG.XML");
@@ -978,10 +985,12 @@ public class EmployeeAction extends MainAction
                     final Element Software = root.getChild("Software");
                     final String version2 = Software.getChild("Version").getText();
                     this.msg = "Version=" + version2;
+                    System.out.println(u + ":E..............................................." + DateUtils.date2String(new Date()));
                     return "success";
                 }
                 this.msg = String.valueOf(f.getAbsolutePath()) + "找不到";
                 this.excel = new ByteArrayInputStream(this.msg.getBytes());
+                System.out.println(u + ":F..............................................." + DateUtils.date2String(new Date()));
                 this.filename = "error.txt";
             }
             else {
@@ -992,6 +1001,7 @@ public class EmployeeAction extends MainAction
             }
         }
         else if (mac != null && config != null && config.equals("false")) {
+            System.out.println(u + ":G..............................................." + DateUtils.date2String(new Date()));
             final Map dept = this.deptService.findByMac(mac);
             if (dept != null) {
 
@@ -1063,6 +1073,7 @@ public class EmployeeAction extends MainAction
         }
         final Map m = new HashMap();
         m.put("mac", mac);
+        System.out.println(u + ":H..............................................." + DateUtils.date2String(new Date()));
         if (version == null || version.equals("")) {
             logger.info("没有发送版本号，是请求配置文件，去配置文件读取版本号");
             final String filePath = String.valueOf(basepath) + "update" + File.separator + playListId + File.separator + "CONFIG.XML";
@@ -1081,6 +1092,7 @@ public class EmployeeAction extends MainAction
             }
         }
         else {
+            System.out.println(u + ":I..............................................." + DateUtils.date2String(new Date()));
             m.put("version", version);
             logger.info("getUpdateVersin-version=" + version);
         }
@@ -1091,6 +1103,7 @@ public class EmployeeAction extends MainAction
         if (mac != null && !mac.equals("")) {
             M7Info.getInstance().add(m);
         }
+        System.out.println(u + ":J..............................................." + DateUtils.date2String(new Date()));
         M7Info.getInstance();
         M7Info.Save();
         if (this.url.equals("")) {

@@ -114,6 +114,7 @@ public class DeviceService extends SuperDao
             return this.getJdbcTemplate().queryForMap(sql, args);
         }
         catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -125,6 +126,7 @@ public class DeviceService extends SuperDao
             return this.getJdbcTemplate().update(sql, args)>0;
         }
         catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -139,6 +141,7 @@ public class DeviceService extends SuperDao
             this.getJdbcTemplate().update(sql, arg);
         }
         catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

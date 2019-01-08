@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+	   default-lazy-init="false">
+
+	<!--Spring Quartz定时器配置 
+	1.启动定时器SchedulerFactoryBean
+	2.JobDetailBean
+	3.指定工作的准确运行时间CronTriggerBean
+	-->
+    <!-- jobDataAsMap属性即该任务类中需要注入的属性值 -->   
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+		<property name="triggers">  
+			<list>
+                <!--<ref bean="syncDept"/>
+                <ref bean="syncEmployee"/>-->
+			</list>  
+		</property>  
+	</bean>
+
+    <!-- 定义触发时间 -->
+    <bean id="syncDept" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <ref bean="syncDeptTask"/>
+        </property>
+        <!-- cron表达式 -->
+        <property name="cronExpression">
+            <value>0 0 0/1 * * ?</value>
+        </property>
+    </bean>
+
+    <bean id="syncQuartzJob" class="com.sundyn.quartz.QuartzJob"></bean>
+
+    <bean id="syncDeptTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="syncQuartzJob"/>
+        </property>
+        <property name="targetMethod">
+            <value>syncDept</value>
+        </property>
+    </bean>
+
+
+    <bean id="syncEmployee" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <ref bean="syncEmployeeTask"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 0/1 * * ?</value>
+        </property>
+    </bean>
+
+    <bean id="syncEmployeeTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="syncQuartzJob"/>
+        </property>
+        <property name="targetMethod">
+            <value>syncEmployee</value>
+        </property>
+    </bean>
+ </beans>
